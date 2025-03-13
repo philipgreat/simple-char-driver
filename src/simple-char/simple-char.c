@@ -5,12 +5,12 @@
 #include <linux/kernel.h>       // 内核相关的宏和函数
 #include <linux/cdev.h>         // 字符设备相关的宏和结构
 
-#define DEVICE_NAME "simple_char_dev"  // 设备名称
+#define DEVICE_NAME "simple_char"  // 设备名称
 #define BUFFER_SIZE 1024               // 设备缓冲区大小
 
 static dev_t dev_num;                  // 设备号
 static struct cdev simple_char_cdev;        // 字符设备结构
-static char buffer[BUFFER_SIZE];       // 设备缓冲区
+static char buffer[BUFFER_SIZE]="simple driver";       // 设备缓冲区
 static int buffer_offset = 0;          // 缓冲区当前偏移量
 
 // 设备打开操作
@@ -27,15 +27,27 @@ static int simple_char_release(struct inode *inode, struct file *file) {
 
 // 设备读取操作
 static ssize_t simple_char_read(struct file *file, char __user *buf, size_t count, loff_t *pos) {
-    if (*pos >= buffer_offset)
+
+
+    
+    printk(KERN_INFO "reading data buf: pos=%lld,buffer_offset=%lld,\n", *pos,buffer_offset);
+
+    if (*pos >= buffer_offset){
+        printk(KERN_INFO "*pos >= buffer_offset reading data\n");
         return 0; // 已经读取完所有数据
+    }
+    
+    
 
     if (count > buffer_offset - *pos)
         count = buffer_offset - *pos;
 
-    if (copy_to_user(buf, buffer + *pos, count))
+    if (copy_to_user(buf, buffer + *pos, count)){
+        printk(KERN_INFO "-EFAULT copy_to_user(buf, buffer + *pos, count)\n");
         return -EFAULT;
-
+    }
+       
+    printk(KERN_INFO "reading\n");
     *pos += count;
     return count;
 }

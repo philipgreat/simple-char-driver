@@ -1,6 +1,7 @@
 #obj-m += src/hello/main.o
 obj-m += src/simple-char/simple-char.o
-obj-m += src/hello/hello.o
+#obj-m += src/hello/hello.o
+#obj-m += src/x003/x003.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
