@@ -1,5 +1,6 @@
-obj-m += src/hello/main.o
-obj-m += src/single-char-driver/main.o
+#obj-m += src/hello/main.o
+obj-m += src/simple-char/simple-char.o
+obj-m += src/hello/hello.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
